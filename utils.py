@@ -1,38 +1,37 @@
-
 import gspread
-from datetime import datetime, timedelta
+from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 SHEET_ID = "1ECtU9jLUHFeAqpH5UggdFjkiEeicq6F_ZHGD9RGsBGc"
 SHEET_NAME = "Trang tính1"
 
-def get_sheet_data():
+def get_expiring_accounts():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
-    return sheet.get_all_records()
+    rows = sheet.get_all_values()
 
-def get_expiring_accounts():
-    data = get_sheet_data()
     today = datetime.today().date()
     results = []
 
-    for row in data:
-        if row.get("Tên") != "Khuyên":
+    for row in rows[1:]:  # Bỏ qua header
+        if len(row) < 11:
+            continue
+        if row[2] != "Khuyên":  # Lọc theo tên ở cột C
             continue
         try:
-            exp_date = datetime.strptime(row["Hết hạn"], "%Y-%m-%d").date()
+            exp_date = datetime.strptime(row[9], "%Y-%m-%d").date()  # Cột K
         except:
             continue
-        remaining = (exp_date - today).days
-        if remaining in [0, 1]:
+        remaining_days = (exp_date - today).days
+        if remaining_days in [0, 1]:
             results.append({
-                "platform": row["Tên"],
-                "account": row["Account"],
-                "date_reg": row["Date reg"],
-                "price": row["Giá bán"],
-                "exp_date": exp_date,
-                "remaining": remaining
+                "platform": row[2],         # C
+                "account": row[5],          # f
+                "date_reg": row[8],         # i
+                "Giá bán": row[15],          # G
+                "exp_date": row[9],        # K
+                "remaining": remaining_days
             })
     return results

@@ -16,18 +16,18 @@ logging.basicConfig(level=logging.INFO)
 
 def format_message(accounts):
     if not accounts:
-        return "✅ Không có tài khoản nào sắp hết hạn!"
-    
-    msg = "[📌] *Danh sách tài khoản sắp hết hạn:*
-"
+        return "✅ Không có tài khoản nào sắp hết hạn."
+
+    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
-        msg += f"""
+        text += f"""
 📱 {acc['platform']}
 👤 {acc['account']}
-🗓️ Reg: {acc['date_reg']} | 💰 Giá: {acc['price']}
+🗓️ Reg: {acc['date_reg']} | 💰 Giá: {acc['Giá bán']}
 ⏰ Exp: {acc['exp_date']} (Còn {acc['remaining']} ngày)
+
 """
-    return msg.strip()
+    return text.strip()
 
 async def notify_expiring(context: ContextTypes.DEFAULT_TYPE):
     accounts = get_expiring_accounts()
