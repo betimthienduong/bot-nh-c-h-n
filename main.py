@@ -94,7 +94,20 @@ def main():
     minute = int(os.getenv("REMIND_MINUTE", "0"))
     from datetime import time
     app.job_queue.run_daily(notify_expiring, time=time(hour=hour, minute=minute))
-    app.run_polling()
+    
+    import asyncio
+    from telegram.ext.webhook import WebhookServer
+
+    PORT = int(os.getenv("PORT", "8080"))
+    WEBHOOK_PATH = f"/webhook"
+    WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+
+    async def start():
+        await app.bot.set_webhook(f"{WEBHOOK_URL}{WEBHOOK_PATH}")
+        await app.run_webhook(listen="0.0.0.0", port=PORT, url_path="webhook")
+
+    asyncio.run(start())
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
