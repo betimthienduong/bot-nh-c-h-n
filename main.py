@@ -1,5 +1,4 @@
 import os
-import io
 import json
 import datetime
 import logging
@@ -56,8 +55,7 @@ async def notify_expiring(context: ContextTypes.DEFAULT_TYPE):
     accounts = extract_expiring_accounts()
     if not accounts:
         return
-    text = "[📌] *Danh sách tài khoản sắp hết hạn:*
-"
+    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
         text += f"\n• *{acc['nền tảng']}* | {acc['dịch vụ']}\n➡️ `{acc['account']}`\n📅 Đăng ký: {acc['date_reg']} | 💰 Giá: {acc['giá_bán']}\n"
     await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=text, parse_mode="Markdown")
@@ -67,8 +65,7 @@ async def on_demand(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not accounts:
         await update.message.reply_text("✅ Không có tài khoản nào sắp hết hạn.")
         return
-    text = "[📌] *Danh sách tài khoản sắp hết hạn:*
-"
+    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
         text += f"\n• *{acc['nền tảng']}* | {acc['dịch vụ']}\n➡️ `{acc['account']}`\n📅 Đăng ký: {acc['date_reg']} | 💰 Giá: {acc['giá_bán']}\n"
     await update.message.reply_text(text, parse_mode="Markdown")
