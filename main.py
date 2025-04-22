@@ -73,7 +73,12 @@ async def on_demand(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("hethan", on_demand))
-    app.job_queue.run_daily(notify_expiring, time=datetime.time(hour=8, minute=0))
+        # Lấy giờ phút từ biến môi trường
+    hour = int(os.getenv("REMIND_HOUR", "8"))
+    minute = int(os.getenv("REMIND_MINUTE", "0"))
+
+    # Thiết lập job nhắc nhở theo thời gian cấu hình
+    app.job_queue.run_daily(notify_expiring, time=datetime.time(hour=hour, minute=minute))
     app.run_polling()
 
 if __name__ == '__main__':
