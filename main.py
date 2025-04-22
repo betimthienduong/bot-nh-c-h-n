@@ -34,6 +34,7 @@ async def notify_expiring(context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=CHANNEL_ID, text=message, parse_mode="Markdown")
 
 async def hethan_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("📥 Đã nhận lệnh /hethan từ:", update.effective_user.username or update.effective_user.id)
     accounts = get_expiring_accounts()
     message = format_message(accounts)
     await update.message.reply_text(message, parse_mode="Markdown")
