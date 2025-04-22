@@ -96,17 +96,26 @@ def main():
     app.job_queue.run_daily(notify_expiring, time=time(hour=hour, minute=minute))
     
     import asyncio
-    from telegram.ext.webhook import WebhookServer
+    from datetime import time
 
-    PORT = int(os.getenv("PORT", "8080"))
-    WEBHOOK_PATH = f"/webhook"
-    WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+    async def main_async():
+        app.add_handler(CommandHandler("hethan", on_demand))
+        hour = int(os.getenv("REMIND_HOUR", "8"))
+        minute = int(os.getenv("REMIND_MINUTE", "0"))
+        app.job_queue.run_daily(notify_expiring, time=time(hour=hour, minute=minute))
+        await app.initialize()
+        await app.bot.set_webhook(url=os.getenv("WEBHOOK_URL") + "/webhook")
+        await app.start()
+        await app.updater.start_webhook(
+            listen="0.0.0.0",
+            port=int(os.getenv("PORT", 8080)),
+            url_path="webhook",
+            webhook_url=os.getenv("WEBHOOK_URL") + "/webhook"
+        )
+        await app.updater.wait_until_closed()
 
-    async def start():
-        await app.bot.set_webhook(f"{WEBHOOK_URL}{WEBHOOK_PATH}")
-        await app.run_webhook(listen="0.0.0.0", port=PORT, url_path="webhook")
-
-    asyncio.run(start())
+    import asyncio
+    asyncio.run(main_async())
 
 
 if __name__ == '__main__':
