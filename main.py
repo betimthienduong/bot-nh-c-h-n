@@ -11,7 +11,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_CHAT_ID = os.getenv("CHANNEL_CHAT_ID")
 
-SHEET_NAME = 'Trình đơn'
+SHEET_NAME = 'chatgpt'
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
 def connect_sheet():
