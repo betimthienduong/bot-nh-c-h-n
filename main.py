@@ -1,3 +1,4 @@
+
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
@@ -7,13 +8,15 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
 from datetime import datetime, timedelta, time
-import asyncio
 
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1ECU9jLUHFeAqpH5UggdFjkiEeiqc6F_ZHGD9Rs8Gc/edit"
 WORKSHEET_NAME = "chatgpt"
+
 BOT_TOKEN = "8061636048:AAFKKFGlf2WLmARSVVIlMI_6jUNPK-YqpVY"
 CHANNEL_CHAT_ID = os.getenv("CHANNEL_CHAT_ID")
+
+BOT_TOKEN = "8061636048:AAFKKFGlf2WLmARSVVIlMI_6jUNPK-YqpVY"
 
 def connect_sheet():
     credentials_raw = os.getenv("GOOGLE_CREDENTIALS")
@@ -42,13 +45,12 @@ def extract_expiring_accounts():
                     "date": row.get("Date reg", ""),
                     "giá": row.get("Giá bán", ""),
                     "hết hạn": str(expire_date),
-                    "còn": delta,
-                    "email": row.get("Email", ""),
-                    "expiry": str(expire_date)
+                    "còn": delta
                 })
         except Exception:
             continue
     return expiring_accounts
+
 
 def format_message(accounts):
     if not accounts:
@@ -63,6 +65,19 @@ def format_message(accounts):
             f"⏰ Hết hạn: {acc['hết hạn']} (Còn {acc['còn']} ngày)\n"
             f"📬 Email: `{acc['email']}` - HSD: *{acc['expiry']}*\n"
             "───────────────\n"
+        )
+
+    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
+    for acc in accounts:
+        text += (
+            f"
+"
+            f"👤 `{acc['account']}`
+"
+            f"🗓️ Đăng ký: {acc['date']} | 💰 Giá: {acc['giá']}
+"
+            f"⏰ Hết hạn: {acc['hết hạn']} (Còn {acc['còn']} ngày)
+"
         )
     return text
 
@@ -79,17 +94,15 @@ async def on_demand(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def reply_to_any_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🤖 Mình là bot nhắc hạn. Gửi /hethan để xem tài khoản sắp hết hạn nhé!")
 
-async def main():
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+import asyncio
+BOT_TOKEN = "8061636048:AAFKKFGlf2WLmARSVVIlMI_6jUNPK-YqpVY"
 
+async def main():
     app.add_handler(CommandHandler("hethan", on_demand))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply_to_any_message))
-
     hour = int(os.getenv("REMIND_HOUR", "8"))
     minute = int(os.getenv("REMIND_MINUTE", "0"))
-
     app.job_queue.run_daily(notify_expiring, time=time(hour=hour, minute=minute))
-
     await app.bot.set_webhook(url=os.getenv("WEBHOOK_URL") + "/webhook")
     await app.run_webhook(
         listen="0.0.0.0",
