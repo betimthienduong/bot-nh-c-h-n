@@ -56,10 +56,9 @@ def format_message(accounts):
     if not accounts:
         return "✅ Không có tài khoản nào sắp hết hạn."
 
-    lines = ["[📌] *Danh sách tài khoản sắp hết hạn:*\n"]
+    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
-        lines.append(
-            f"📱 *{acc['nền tảng']}* - {acc['dịch vụ']}\n"
+        text += f"📬 `{acc['email']}` - HSD: *{acc['expiry']}*\n"
             f"👤 `{acc['account']}`\n"
             f"🗓️ Đăng ký: {acc['date']} | 💰 Giá: {acc['giá']}\n"
             f"⏰ Hết hạn: {acc['hết hạn']} (Còn {acc['còn']} ngày)\n"
@@ -70,7 +69,6 @@ def format_message(accounts):
         return "✅ Không có tài khoản nào sắp hết hạn."
 
     text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
-"
     for acc in accounts:
         text += (
             f"
