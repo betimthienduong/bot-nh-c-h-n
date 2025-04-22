@@ -1,6 +1,8 @@
 import gspread
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
+import json
+import os
 
 SHEET_ID = "1ECtU9jLUHFeAqpH5UggdFjkiEeicq6F_ZHGD9RGsBGc"
 SHEET_NAME = "chatgpt"
