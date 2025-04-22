@@ -8,7 +8,7 @@ SHEET_NAME = "chatgpt"
 def get_expiring_accounts():
     creds_json = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
     rows = sheet.get_all_values()
@@ -17,7 +17,7 @@ def get_expiring_accounts():
     results = []
 
     for row in rows[1:]:  # Bỏ qua header
-        if len(row) < 11:
+        if len(row) < 16:
             continue
         if row[2] != "Khuyên":  # Lọc theo tên ở cột C
             continue
