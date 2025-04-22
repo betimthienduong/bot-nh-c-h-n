@@ -55,7 +55,7 @@ def format_message(accounts):
     if not accounts:
         return "✅ Không có tài khoản nào sắp hết hạn."
 
-    text = "[📌] *Danh sách tài khoản sắp hết hạn:*
+    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
 "
     for acc in accounts:
         text += (
