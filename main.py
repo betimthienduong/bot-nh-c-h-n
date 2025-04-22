@@ -95,26 +95,29 @@ def main():
     from datetime import time
     app.job_queue.run_daily(notify_expiring, time=time(hour=hour, minute=minute))
     
+    from telegram.ext import MessageHandler, filters
+
+    async def reply_to_any_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await update.message.reply_text("🤖 Mình là bot nhắc hạn. Gửi /hethan để xem tài khoản sắp hết hạn nhé!")
+
     import asyncio
     from datetime import time
 
     async def main_async():
         app.add_handler(CommandHandler("hethan", on_demand))
+        app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply_to_any_message))
         hour = int(os.getenv("REMIND_HOUR", "8"))
         minute = int(os.getenv("REMIND_MINUTE", "0"))
         app.job_queue.run_daily(notify_expiring, time=time(hour=hour, minute=minute))
         await app.initialize()
         await app.bot.set_webhook(url=os.getenv("WEBHOOK_URL") + "/webhook")
         await app.start()
-        await app.updater.start_webhook(
+        await app.run_webhook(
             listen="0.0.0.0",
             port=int(os.getenv("PORT", 8080)),
-            url_path="webhook",
-            webhook_url=os.getenv("WEBHOOK_URL") + "/webhook"
+            url_path="webhook"
         )
-        await app.updater.wait_until_closed()
 
-    import asyncio
     asyncio.run(main_async())
 
 
