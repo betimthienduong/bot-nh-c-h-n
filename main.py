@@ -66,7 +66,6 @@ def format_message(accounts):
             f"📬 Email: `{acc['email']}` - HSD: *{acc['expiry']}*\n"
             "───────────────\n"
         )
-        return "✅ Không có tài khoản nào sắp hết hạn."
 
     text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
