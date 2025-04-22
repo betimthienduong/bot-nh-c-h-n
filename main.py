@@ -10,6 +10,7 @@ from telegram.ext import (
     ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler,
     filters, Defaults, AIORateLimiter
 )
+import nest_asyncio
 
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 SHEET_URL = os.getenv("SHEET_URL")
@@ -94,4 +95,5 @@ async def main():
     await app.run_webhook(listen="0.0.0.0", port=int(os.getenv("PORT", 8080)), url_path="webhook")
 
 if __name__ == "__main__":
+    nest_asyncio.apply()
     asyncio.run(main())
