@@ -21,7 +21,7 @@ def connect_sheet():
     credentials_json = json.loads(credentials_raw)
     creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_json, SCOPE)
     client = gspread.authorize(creds)
-    return client.open(SHEET_NAME).sheet1
+    return client.open_by_url("https://docs.google.com/spreadsheets/d/1ECU9jLUHFeAqpH5UggdFjkiEeiqc6F_ZHGD9Rs8Gc/edit").worksheet("chatgpt")
 
 def extract_expiring_accounts():
     sheet = connect_sheet()
