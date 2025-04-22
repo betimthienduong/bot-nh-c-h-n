@@ -58,7 +58,8 @@ def format_message(accounts):
 
     text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
-        text += f"📬 `{acc['email']}` - HSD: *{acc['expiry']}*\n"
+        text += (
+            f"📬 `{acc['email']}` - HSD: *{acc['expiry']}*\n"
             f"👤 `{acc['account']}`\n"
             f"🗓️ Đăng ký: {acc['date']} | 💰 Giá: {acc['giá']}\n"
             f"⏰ Hết hạn: {acc['hết hạn']} (Còn {acc['còn']} ngày)\n"
