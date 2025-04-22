@@ -13,10 +13,10 @@ SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1ECU9jLUHFeAqpH5UggdFjkiEeiqc6F_ZHGD9Rs8Gc/edit"
 WORKSHEET_NAME = "chatgpt"
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = "8061636048:AAFKKFGlf2WLmARSVVIlMI_6jUNPK-YqpVY"
 CHANNEL_CHAT_ID = os.getenv("CHANNEL_CHAT_ID")
 
-app = ApplicationBuilder().token(BOT_TOKEN).build()
+BOT_TOKEN = "8061636048:AAFKKFGlf2WLmARSVVIlMI_6jUNPK-YqpVY"
 
 def connect_sheet():
     credentials_raw = os.getenv("GOOGLE_CREDENTIALS")
