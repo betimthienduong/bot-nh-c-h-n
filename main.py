@@ -92,7 +92,8 @@ def main():
 
     hour = int(os.getenv("REMIND_HOUR", "8"))
     minute = int(os.getenv("REMIND_MINUTE", "0"))
-    app.job_queue.run_daily(notify_expiring, time=datetime.time(hour=hour, minute=minute))
+    from datetime import time
+    app.job_queue.run_daily(notify_expiring, time=time(hour=hour, minute=minute))
     app.run_polling()
 
 if __name__ == '__main__':
