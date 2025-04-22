@@ -21,7 +21,7 @@ def get_expiring_accounts():
     for row in rows[1:]:  # Bỏ qua header
         if len(row) < 16:
             continue
-        if row[2] != "Khuyên":  # Lọc theo tên ở cột C
+        if "Khuyên" not in row[2]:  # Lọc theo tên ở cột C
             continue
         try:
             exp_date = datetime.strptime(row[9], "%Y-%m-%d").date()  # Cột K
