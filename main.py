@@ -62,14 +62,13 @@ async def main():
         )
         print("🔍 Telegram webhook response:", res.status_code, res.text)
 
-    await app.updater.start_webhook(
+    await app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        url_path=TOKEN,
+        webhook_path=f"/{TOKEN}",
         webhook_url=webhook_url
     )
 
-    await app.updater.idle()
 
 if __name__ == "__main__":
     asyncio.run(main())
