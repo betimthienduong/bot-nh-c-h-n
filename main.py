@@ -3,15 +3,14 @@ import json
 import datetime
 import logging
 import gspread
+from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# Biến môi trường Telegram
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHANNEL_CHAT_ID = os.getenv("CHANNEL_CHAT_ID")  # Gửi tin vào kênh
+CHANNEL_CHAT_ID = os.getenv("CHANNEL_CHAT_ID")
 
-# Google Sheet
 SHEET_NAME = 'Trình đơn'
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
@@ -53,9 +52,20 @@ async def notify_expiring(context: ContextTypes.DEFAULT_TYPE):
     accounts = extract_expiring_accounts()
     if not accounts:
         return
-    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
+
+    today = datetime.now().strftime("%d/%m/%Y")
+    text = f"📅 *NHẮC HẠN NGÀY {today}*\n🔔 Những tài khoản sắp hết hạn:\n\n"
+
     for acc in accounts:
-        text += f"\n• *{acc['nền tảng']}* | {acc['dịch vụ']}\n➡️ `{acc['account']}`\n📅 Đăng ký: {acc['date_reg']} | 💰 Giá: {acc['giá_bán']}\n"
+        text += (
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📌 *Nền tảng:* {acc['nền tảng']}\n"
+            f"🛠️ Dịch vụ: {acc['dịch vụ']}\n"
+            f"👤 Tài khoản: `{acc['account']}`\n"
+            f"📆 Đăng ký: {acc['date_reg']}\n"
+            f"💰 Giá bán: {acc['giá_bán']}\n"
+        )
+
     await context.bot.send_message(chat_id=CHANNEL_CHAT_ID, text=text, parse_mode="Markdown")
 
 async def on_demand(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -63,19 +73,25 @@ async def on_demand(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not accounts:
         await update.message.reply_text("✅ Không có tài khoản nào sắp hết hạn.")
         return
-    text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
+    today = datetime.now().strftime("%d/%m/%Y")
+    text = f"📅 *NHẮC HẠN NGÀY {today}*\n🔔 Những tài khoản sắp hết hạn:\n\n"
     for acc in accounts:
-        text += f"\n• *{acc['nền tảng']}* | {acc['dịch vụ']}\n➡️ `{acc['account']}`\n📅 Đăng ký: {acc['date_reg']} | 💰 Giá: {acc['giá_bán']}\n"
+        text += (
+            "━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📌 *Nền tảng:* {acc['nền tảng']}\n"
+            f"🛠️ Dịch vụ: {acc['dịch vụ']}\n"
+            f"👤 Tài khoản: `{acc['account']}`\n"
+            f"📆 Đăng ký: {acc['date_reg']}\n"
+            f"💰 Giá bán: {acc['giá_bán']}\n"
+        )
     await update.message.reply_text(text, parse_mode="Markdown")
 
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("hethan", on_demand))
 
-    # Thời gian gửi nhắc hẹn mỗi ngày từ biến môi trường
     hour = int(os.getenv("REMIND_HOUR", "8"))
     minute = int(os.getenv("REMIND_MINUTE", "0"))
-
     app.job_queue.run_daily(notify_expiring, time=datetime.time(hour=hour, minute=minute))
     app.run_polling()
 
