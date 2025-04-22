@@ -6,6 +6,7 @@ SHEET_ID = "1ECtU9jLUHFeAqpH5UggdFjkiEeicq6F_ZHGD9RGsBGc"
 SHEET_NAME = "chatgpt"
 
 def get_expiring_accounts():
+    creds_json = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
     client = gspread.authorize(creds)
