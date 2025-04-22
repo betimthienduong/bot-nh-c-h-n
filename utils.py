@@ -3,7 +3,7 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
 SHEET_ID = "1ECtU9jLUHFeAqpH5UggdFjkiEeicq6F_ZHGD9RGsBGc"
-SHEET_NAME = "Trang tính1"
+SHEET_NAME = "chatgpt"
 
 def get_expiring_accounts():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
