@@ -24,10 +24,9 @@ def get_expiring_accounts():
         if "Khuyên" not in row[2]:  # Lọc theo tên ở cột C
             continue
         try:
-            exp_date = datetime.strptime(row[9], "%Y-%m-%d").date()  # Cột K
+            remaining_days = int(row[11])
         except:
             continue
-        remaining_days = (exp_date - today).days
         if remaining_days in [0, 1]:
             results.append({
                 "platform": row[2],         # C
