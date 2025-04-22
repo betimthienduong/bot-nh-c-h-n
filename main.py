@@ -9,6 +9,8 @@ import os
 
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = os.getenv("CHANNEL_ID")
+RAILWAY_URL = os.getenv("RAILWAY_URL")  # Ex: your-project.up.railway.app
+PORT = int(os.environ.get('PORT', 8443))
 
 logging.basicConfig(level=logging.INFO)
 
@@ -48,7 +50,15 @@ async def main():
 
     app.job_queue.run_daily(notify_expiring, time=dtime(hour=8, minute=0))
 
-    await app.run_polling()
+    await app.initialize()
+    await app.start()
+    await app.bot.set_webhook(f"https://{RAILWAY_URL}/{TOKEN}")
+    await app.updater.start_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=TOKEN
+    )
+    await app.updater.idle()
 
 if __name__ == "__main__":
     asyncio.run(main())
