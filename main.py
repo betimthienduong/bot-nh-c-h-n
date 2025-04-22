@@ -56,7 +56,8 @@ async def main():
     await app.updater.start_webhook(
         listen="0.0.0.0",
         port=PORT,
-        url_path=TOKEN
+        url_path=TOKEN,
+        webhook_url=f"{RAILWAY_URL}/{TOKEN}"
     )
     await app.updater.idle()
 
