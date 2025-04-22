@@ -59,14 +59,13 @@ def format_message(accounts):
     text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
         text += (
-            f"📬 `{acc['email']}` - HSD: *{acc['expiry']}*\n"
+            f"📱 *{acc['nền tảng']}* - {acc['dịch vụ']}\n"
             f"👤 `{acc['account']}`\n"
             f"🗓️ Đăng ký: {acc['date']} | 💰 Giá: {acc['giá']}\n"
             f"⏰ Hết hạn: {acc['hết hạn']} (Còn {acc['còn']} ngày)\n"
+            f"📬 Email: `{acc['email']}` - HSD: *{acc['expiry']}*\n"
+            "───────────────\n"
         )
-    return "\n".join(lines)
-
-    if not accounts:
         return "✅ Không có tài khoản nào sắp hết hạn."
 
     text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
