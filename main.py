@@ -1,27 +1,34 @@
-import datetime
 import os
+import io
+import json
+import datetime
 import logging
 import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-from oauth2client.service_account import ServiceAccountCredentials
 
-# Cấu hình Google Sheet
-SHEET_NAME = 'Trình đơn'  # Đổi nếu khác
-SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-CRED_FILE = 'credentials.json'
-
+# Telegram
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
 
+# Google Sheets
+SHEET_NAME = 'Trình đơn'
+SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+
 def connect_sheet():
-    creds = ServiceAccountCredentials.from_json_keyfile_name(CRED_FILE, SCOPE)
+    credentials_raw = os.getenv("GOOGLE_CREDENTIALS")
+    if not credentials_raw:
+        raise ValueError("Thiếu biến môi trường GOOGLE_CREDENTIALS")
+    
+    credentials_json = json.loads(credentials_raw)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_json, SCOPE)
     client = gspread.authorize(creds)
     return client.open(SHEET_NAME).sheet1
 
 def extract_expiring_accounts():
     sheet = connect_sheet()
-    rows = sheet.get_all_values()[1:]  # Bỏ dòng tiêu đề
+    rows = sheet.get_all_values()[1:]
 
     result = []
     for row in rows:
