@@ -7,19 +7,18 @@ from oauth2client.service_account import ServiceAccountCredentials
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# Telegram
+# Biến môi trường Telegram
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
+CHANNEL_CHAT_ID = os.getenv("CHANNEL_CHAT_ID")  # Gửi tin vào kênh
 
-# Google Sheets
+# Google Sheet
 SHEET_NAME = 'Trình đơn'
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
 def connect_sheet():
     credentials_raw = os.getenv("GOOGLE_CREDENTIALS")
     if not credentials_raw:
-        raise ValueError("Thiếu biến môi trường GOOGLE_CREDENTIALS")
-    
+        raise ValueError("Thiếu GOOGLE_CREDENTIALS")
     credentials_json = json.loads(credentials_raw)
     creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_json, SCOPE)
     client = gspread.authorize(creds)
@@ -28,7 +27,6 @@ def connect_sheet():
 def extract_expiring_accounts():
     sheet = connect_sheet()
     rows = sheet.get_all_values()[1:]
-
     result = []
     for row in rows:
         if len(row) < 16:
@@ -58,7 +56,7 @@ async def notify_expiring(context: ContextTypes.DEFAULT_TYPE):
     text = "[📌] *Danh sách tài khoản sắp hết hạn:*\n"
     for acc in accounts:
         text += f"\n• *{acc['nền tảng']}* | {acc['dịch vụ']}\n➡️ `{acc['account']}`\n📅 Đăng ký: {acc['date_reg']} | 💰 Giá: {acc['giá_bán']}\n"
-    await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=text, parse_mode="Markdown")
+    await context.bot.send_message(chat_id=CHANNEL_CHAT_ID, text=text, parse_mode="Markdown")
 
 async def on_demand(update: Update, context: ContextTypes.DEFAULT_TYPE):
     accounts = extract_expiring_accounts()
@@ -73,11 +71,11 @@ async def on_demand(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("hethan", on_demand))
-        # Lấy giờ phút từ biến môi trường
+
+    # Thời gian gửi nhắc hẹn mỗi ngày từ biến môi trường
     hour = int(os.getenv("REMIND_HOUR", "8"))
     minute = int(os.getenv("REMIND_MINUTE", "0"))
 
-    # Thiết lập job nhắc nhở theo thời gian cấu hình
     app.job_queue.run_daily(notify_expiring, time=datetime.time(hour=hour, minute=minute))
     app.run_polling()
 
