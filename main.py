@@ -66,7 +66,8 @@ async def main():
         listen="0.0.0.0",
         port=PORT,
         webhook_path=f"/{TOKEN}",
-        webhook_url=webhook_url
+        webhook_url=webhook_url,
+        shutdown_when_stopped=False
     )
 
 
