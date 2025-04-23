@@ -10,7 +10,7 @@ import httpx
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = os.getenv("CHANNEL_ID")
 RAILWAY_URL = os.getenv("RAILWAY_URL")
-PORT = int(os.getenv("PORT", 8080))
+PORT = int(os.getenv("PORT", 8080))  # ✅ Railway thường dùng cổng 8080
 
 logging.basicConfig(level=logging.INFO)
 
@@ -62,6 +62,7 @@ async def main():
         )
         print("🔍 Telegram webhook response:", res.status_code, res.text)
 
+    # ✅ Giữ container luôn chạy
     await app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
@@ -69,7 +70,6 @@ async def main():
         webhook_url=webhook_url,
         shutdown_when_stopped=False
     )
-
 
 if __name__ == "__main__":
     asyncio.run(main())
